@@ -3,6 +3,8 @@
 
 class User < ModelBase
 
+  TABLE_NAME = 'users'
+
   def self.find_by_name(fname, lname)
     results = QuestionsDatabase.instance.execute(<<-SQL, fname, lname)
       SELECT
@@ -17,14 +19,13 @@ class User < ModelBase
     results.map { |result| User.new(result) }
   end
 
-  attr_accessor :fname, :lname, :table
+  attr_accessor :fname, :lname
 
   def initialize(options = {})
-    @id = options["id"]
+    super(options)
     @fname = options["fname"]
     @lname = options['lname']
-    @table = 'users'
-    super(options)
+
   end
 
   def authored_questions

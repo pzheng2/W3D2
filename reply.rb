@@ -34,11 +34,11 @@ class Reply < ModelBase
   attr_accessor :question_id, :parent_id, :user_id, :body
 
   def initialize(options = {})
+    super(options)
     @question_id = options['question_id']
     @parent_id = options['parent_id']
     @user_id = options['user_id']
     @body = options['body']
-    super(options)
   end
 
   def author

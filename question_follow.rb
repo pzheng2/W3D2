@@ -2,6 +2,8 @@
 
 class QuestionFollow < ModelBase
 
+  TABLE_NAME = 'question_follows'
+
   def self.followers_for_question_id(question_id)
     results = QuestionsDatabase.instance.execute(<<-SQL, question_id)
       SELECT
@@ -56,13 +58,13 @@ class QuestionFollow < ModelBase
 
   end
 
-  attr_accessor :question_id, :user_id, :table
+  attr_accessor :question_id, :user_id
 
   def initialize(options = {})
+    super(options)
     @question_id = options['question_id']
     @user_id = options['user_id']
-    @table = 'question_follows'
-    super(options)
+
   end
 
 end

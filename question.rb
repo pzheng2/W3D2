@@ -3,6 +3,8 @@
 
 class Question < ModelBase
 
+  TABLE_NAME = 'questions'
+
   def self.find_by_author_id(author_id)
     results = QuestionsDatabase.instance.execute(<<-SQL, author_id)
       SELECT
@@ -24,13 +26,13 @@ class Question < ModelBase
     QuestionLike.most_liked_questions(n)
   end
 
-  attr_accessor :title, :body, :author_id, :table
+  attr_accessor :title, :body, :author_id
 
   def initialize(options = {})
     @title = options['title']
     @body = options['body']
     @author_id = options['author_id']
-    @table = 'questions'
+
     super(options)
   end
 

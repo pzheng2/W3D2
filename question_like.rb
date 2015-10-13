@@ -3,6 +3,8 @@
 
 class QuestionLike < ModelBase
 
+  TABLE_NAME = 'question_likes'
+
   def self.likers_for_question_id(question_id)
     results = QuestionsDatabase.instance.execute(<<-SQL, question_id)
       SELECT
@@ -72,13 +74,13 @@ class QuestionLike < ModelBase
 
   end
 
-  attr_accessor :user_id, :question_id, :table
+  attr_accessor :user_id, :question_id
 
   def initialize(options = {})
-    @id = options['id']
+    super(options)
     @user_id = options['user_id']
     @question_id = options['question_id']
-    @table = 'question_likes'
+
   end
 
 end

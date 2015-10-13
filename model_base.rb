@@ -45,15 +45,23 @@ class ModelBase
   def save
     if self.id.nil?
       i_vars = self.instance_variables
-      params = i_vars.map { |ivar| self.instance_variable_get(ivar) }.pop
-      column_names = params.join(',').gsub('@', ' ')
+      params = i_vars.map { |ivar| self.instance_variable_get(ivar) }
+      params.shift
+      column_names = i_vars[1..-1].join(',').gsub('@', '')
 
-      QuestionsDatabase.instance.execute(<<-SQL, *params)
+      p params
+
+      sql = <<-SQL
         INSERT INTO
-          "#{self.table}(#{column_names})"
+          #{self.class::TABLE_NAME}(#{column_names})
         VALUES
-          "(#{('?,' * params.count).chomp(',')})"
+          #{(('?,') * params.count).chomp(',')}
       SQL
+
+      p sql
+
+
+      QuestionsDatabase.instance.execute(sql, *params)
 
       @id = QuestionsDatabase.instance.last_insert_row_id
     else
