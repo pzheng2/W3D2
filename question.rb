@@ -1,20 +1,7 @@
-require_relative 'model_base'
+# require_relative 'model_base'
 
 
-class Question
-
-  def self.find_by_id(id)
-    results = QuestionsDatabase.instance.execute(<<-SQL, id)
-      SELECT
-        *
-      FROM
-        questions
-      WHERE
-        id = ?
-      SQL
-
-    results.map { |result| Question.new(result) }.first
-  end
+class Question < ModelBase
 
   def self.find_by_author_id(author_id)
     results = QuestionsDatabase.instance.execute(<<-SQL, author_id)
@@ -37,13 +24,14 @@ class Question
     QuestionLike.most_liked_questions(n)
   end
 
-  attr_accessor :id, :title, :body, :author_id
+  attr_accessor :title, :body, :author_id, :table
 
   def initialize(options = {})
-    @id = options['id']
     @title = options['title']
     @body = options['body']
     @author_id = options['author_id']
+    @table = 'questions'
+    super(options)
   end
 
   def author
@@ -66,32 +54,4 @@ class Question
     QuestionLike.num_likes_for_question_id(id)
   end
 
-  def save
-    if self.id.nil?
-      params = [title, body, author_id]
-      QuestionsDatabase.instance.execute(<<-SQL, *params)
-        INSERT INTO
-          questions(title, body, author_id)
-        VALUES
-          (?, ?, ?)
-      SQL
-
-      @id = QuestionsDatabase.instance.last_insert_row_id
-    else
-      update
-    end
-
-    nil
-  end
-
-  def update
-    params = [title, body, author_id, id]
-    QuestionsDatabase.instance.execute(<<-SQL, *params)
-      UPDATE questions
-      SET title = ?, body = ?, author_id = ?
-      WHERE id = ?
-    SQL
-
-    nil
-  end
 end

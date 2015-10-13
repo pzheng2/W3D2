@@ -1,20 +1,9 @@
-require_relative 'model_base'
+# require_relative 'model_base'
 
 
-class Reply
+class Reply < ModelBase
 
-  def self.find_by_id(id)
-    results = QuestionsDatabase.instance.execute(<<-SQL, id)
-      SELECT
-        *
-      FROM
-        replies
-      WHERE
-        id = ?
-      SQL
-
-    results.map { |result| Reply.new(result) }.first
-  end
+  TABLE_NAME = 'replies'
 
   def self.find_by_user_id(id)
     results = QuestionsDatabase.instance.execute(<<-SQL, id)
@@ -42,14 +31,14 @@ class Reply
     results.empty? ? nil : results.map { |result| Reply.new(result) }
   end
 
-  attr_accessor :id, :question_id, :parent_id, :user_id, :body
+  attr_accessor :question_id, :parent_id, :user_id, :body
 
   def initialize(options = {})
-    @id = options['id']
     @question_id = options['question_id']
     @parent_id = options['parent_id']
     @user_id = options['user_id']
     @body = options['body']
+    super(options)
   end
 
   def author
@@ -75,36 +64,6 @@ class Reply
     SQL
 
     results.map { |result| Reply.new(result) }
-  end
-
-  def save
-    if self.id.nil?
-
-      params = [question_id, parent_id, user_id, body]
-      QuestionsDatabase.instance.execute(<<-SQL, *params)
-        INSERT INTO
-          replies(question_id, parent_id, user_id, body)
-        VALUES
-          (?, ?, ?, ?)
-      SQL
-
-      @id = QuestionsDatabase.instance.last_insert_row_id
-    else
-      update
-    end
-
-    nil
-  end
-
-  def update
-    params = [question_id, parent_id, user_id, body, id]
-    QuestionsDatabase.instance.execute(<<-SQL, *params)
-      UPDATE replies
-      SET question_id = ?, parent_id = ?, user_id = ?, body = ?
-      WHERE id = ?
-    SQL
-
-    nil
   end
 
 end

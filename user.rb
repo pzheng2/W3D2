@@ -1,20 +1,7 @@
-require_relative 'model_base'
+# require_relative 'model_base'
 
 
-class User
-
-  def self.find_by_id(id)
-    results = QuestionsDatabase.instance.execute(<<-SQL, id)
-      SELECT
-        *
-      FROM
-        users
-      WHERE
-        id = ?
-      SQL
-
-    results.map { |result| User.new(result) }.first
-  end
+class User < ModelBase
 
   def self.find_by_name(fname, lname)
     results = QuestionsDatabase.instance.execute(<<-SQL, fname, lname)
@@ -30,12 +17,14 @@ class User
     results.map { |result| User.new(result) }
   end
 
-  attr_accessor :id, :fname, :lname
+  attr_accessor :fname, :lname, :table
 
   def initialize(options = {})
     @id = options["id"]
     @fname = options["fname"]
     @lname = options['lname']
+    @table = 'users'
+    super(options)
   end
 
   def authored_questions
@@ -70,35 +59,6 @@ class User
     SQL
 
     results.first['avg']
-  end
-
-  def save
-    if self.id.nil?
-      params = [fname, lname]
-      QuestionsDatabase.instance.execute(<<-SQL, *params)
-        INSERT INTO
-          users(fname, lname)
-        VALUES
-          (?, ?)
-      SQL
-
-      @id = QuestionsDatabase.instance.last_insert_row_id
-    else
-      update
-    end
-
-    nil
-  end
-
-  def update
-    params = [fname, lname, id]
-    QuestionsDatabase.instance.execute(<<-SQL, *params)
-      UPDATE users
-      SET fname = ?, lname = ?
-      WHERE id = ?
-    SQL
-
-    nil
   end
 
 end

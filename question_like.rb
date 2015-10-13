@@ -1,20 +1,7 @@
-require_relative 'model_base'
+# require_relative 'model_base'
 
 
-class QuestionLike
-
-  def self.find_by_id(id)
-    results = QuestionsDatabase.instance.execute(<<-SQL, id)
-      SELECT
-        *
-      FROM
-        question_likes
-      WHERE
-        id = ?
-      SQL
-
-    results.map { |result| QuestionLike.new(result) }.first
-  end
+class QuestionLike < ModelBase
 
   def self.likers_for_question_id(question_id)
     results = QuestionsDatabase.instance.execute(<<-SQL, question_id)
@@ -85,12 +72,13 @@ class QuestionLike
 
   end
 
-  attr_accessor :user_id, :question_id
+  attr_accessor :user_id, :question_id, :table
 
   def initialize(options = {})
     @id = options['id']
     @user_id = options['user_id']
     @question_id = options['question_id']
+    @table = 'question_likes'
   end
 
 end

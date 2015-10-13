@@ -1,6 +1,6 @@
-require_relative 'model_base'
+# require_relative 'model_base'
 
-class QuestionFollow
+class QuestionFollow < ModelBase
 
   def self.followers_for_question_id(question_id)
     results = QuestionsDatabase.instance.execute(<<-SQL, question_id)
@@ -56,11 +56,13 @@ class QuestionFollow
 
   end
 
-  attr_accessor :question_id, :user_id
+  attr_accessor :question_id, :user_id, :table
 
   def initialize(options = {})
     @question_id = options['question_id']
     @user_id = options['user_id']
+    @table = 'question_follows'
+    super(options)
   end
 
 end
