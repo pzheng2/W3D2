@@ -1,9 +1,9 @@
-require_relative 'QuestionsDatabase'
+# require_relative 'QuestionsDatabase'
 require_relative 'user'
-require_relative 'question'
-require_relative 'reply'
-require_relative 'question_like'
-require_relative 'question_follow'
+# require_relative 'question'
+# require_relative 'reply'
+# require_relative 'question_like'
+# require_relative 'question_follow'
 
 require 'byebug'
 
@@ -48,14 +48,16 @@ class ModelBase
       params = i_vars.map { |ivar| self.instance_variable_get(ivar) }
       params.shift
       column_names = i_vars[1..-1].join(',').gsub('@', '')
-
+      p column_names
       p params
 
+      a = "("+(('?,') * params.count).chomp(',')+")"
+      p a
       sql = <<-SQL
         INSERT INTO
           #{self.class::TABLE_NAME}(#{column_names})
         VALUES
-          #{(('?,') * params.count).chomp(',')}
+          #{a}
       SQL
 
       p sql
