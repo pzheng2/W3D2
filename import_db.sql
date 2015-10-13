@@ -35,6 +35,7 @@ CREATE TABLE replies(
 );
 
 CREATE TABLE question_likes (
+  id INTEGER PRIMARY KEY,
   user_id INTEGER NOT NULL,
   question_id INTEGER NOT NULL,
 
@@ -59,4 +60,40 @@ INSERT INTO
   questions(title, body, author_id)
 VALUES
   ('i', 'hello world', 1)
+  ;
+
+INSERT INTO
+  replies(question_id, parent_id, user_id, body)
+VALUES
+  (1, NULL, 1, "This is cool")
+  ;
+
+INSERT INTO
+  replies(question_id, parent_id, user_id, body)
+VALUES
+  (1, 1, 1, "No it's not")
+  ;
+
+INSERT INTO
+  replies(question_id, parent_id, user_id, body)
+VALUES
+  (1, 1, 1, "Yes")
+  ;
+
+INSERT INTO
+  question_follows(question_id, user_id)
+VALUES
+  (2, 1)
+  ;
+
+INSERT INTO
+  question_follows(question_id, user_id)
+VALUES
+  (1, 1)
+  ;
+
+INSERT INTO
+  question_likes(user_id, question_id)
+VALUES
+  (1, 2)
   ;
